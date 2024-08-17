@@ -51,10 +51,7 @@ class TestRoutes(TestCase):
             (self.user, HTTPStatus.NOT_FOUND),
         )
         for user, status in users_statuses:
-            # Логиним пользователя в клиенте:
             self.client.force_login(user)
-            # Для каждой пары "пользователь - ожидаемый ответ"
-            # перебираем имена тестируемых страниц:
 
             for name in ('notes:edit', 'notes:detail', 'notes:delete'):
                 with self.subTest(user=user, name=name):
@@ -63,7 +60,6 @@ class TestRoutes(TestCase):
                     self.assertEqual(response.status_code, status)
 
     def test_redirect_for_anonymous_client(self):
-        # Сохраняем адрес страницы логина:
         login_url = reverse('users:login')
         urls = (
             ('notes:list', None),
