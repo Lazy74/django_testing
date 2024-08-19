@@ -3,10 +3,9 @@ from time import sleep
 
 import pytest
 from django.test.client import Client
+from django.conf import settings
 
 from news.models import Comment, News
-
-NEWS_COUNT_ON_HOME_PAGE = 10
 
 
 @pytest.fixture
@@ -77,7 +76,7 @@ def form_data(comment_text):
 def news_list():
     news = []
     today = datetime.today()
-    for index in range(NEWS_COUNT_ON_HOME_PAGE + 1):
+    for index in range(settings.NEWS_COUNT_ON_HOME_PAGE + 1):
         news_piece = News.objects.create(
             title=f'Заголовок новости {index}',
             text=f'Текст {index}',

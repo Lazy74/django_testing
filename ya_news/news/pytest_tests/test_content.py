@@ -1,8 +1,7 @@
 import pytest
 
 from django.urls import reverse
-
-from news.pytest_tests.conftest import NEWS_COUNT_ON_HOME_PAGE
+from django.conf import settings
 
 URL = reverse('news:home')
 
@@ -11,7 +10,10 @@ URL = reverse('news:home')
 @pytest.mark.usefixtures('news_list')
 def test_news_count(client):
     response = client.get(URL)
-    assert response.context['object_list'].count() <= NEWS_COUNT_ON_HOME_PAGE
+    assert (
+        response.context['object_list'].count()
+        <= settings.NEWS_COUNT_ON_HOME_PAGE
+    )
 
 
 @pytest.mark.django_db
