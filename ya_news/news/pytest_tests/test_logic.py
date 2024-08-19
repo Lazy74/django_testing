@@ -15,8 +15,9 @@ def test_anonymous_user_cant_create_comment(
     client,
     news,
 ):
+    comment_count = Comment.objects.count()
     client.post(reverse('news:detail', args=(news.pk,)), data=FORM_DATA)
-    assert Comment.objects.count() == Comment.objects.count()
+    assert comment_count == Comment.objects.count()
 
 
 @pytest.mark.parametrize(
