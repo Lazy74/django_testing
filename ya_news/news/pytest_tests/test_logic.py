@@ -20,19 +20,14 @@ def test_anonymous_user_cant_create_comment(
     assert comment_count == Comment.objects.count()
 
 
-@pytest.mark.parametrize(
-    'user_auth',
-    (
-        pytest.lazy_fixture('author_client'),
-    )
-)
 def test_auth_user_can_create_comment(
-    user_auth,
+    author_client,
     news,
 ):
     buff_comment_count = Comment.objects.count()
-    user_auth.post(reverse('news:detail', args=(news.pk,)), data=FORM_DATA)
+    author_client.post(reverse('news:detail', args=(news.pk,)), data=FORM_DATA)
     assert Comment.objects.count() == buff_comment_count + 1
+    assert Comment.objects.get().text == FORM_DATA['text']
 
 
 def test_user_cant_use_bad_words(author_client, news):
