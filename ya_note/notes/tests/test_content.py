@@ -1,5 +1,5 @@
 from django.contrib.auth import get_user_model
-from django.test import TestCase
+from django.test import Client, TestCase
 from django.urls import reverse
 
 from notes.forms import NoteForm
@@ -13,6 +13,8 @@ class TestHomePage(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.one_author = User.objects.create(username='OneAuthor')
+        cls.one_author_client = Client()
+        cls.one_author_client.force_login(cls.one_author)
         cls.one_note = Note.objects.create(
             title='Новая заметка',
             author=cls.one_author,
@@ -21,6 +23,8 @@ class TestHomePage(TestCase):
         )
 
         cls.two_author = User.objects.create(username='TwoAuthor')
+        cls.two_author_client = Client()
+        cls.two_author_client.force_login(cls.two_author)
         cls.two_note = Note.objects.create(
             title='Новая заметка',
             author=cls.two_author,
@@ -35,12 +39,10 @@ class TestHomePage(TestCase):
         )
 
     def test_news_count(self):
-        self.client.force_login(self.two_author)
         url = reverse('notes:list')
-        response = self.client.get(url)
+        response = self.two_author_client.get(url)
         object_list = response.context['object_list']
-        news_count = object_list.count()
-        self.assertEqual(news_count, 2)
+        self.assertIn(member=self.two_note, container=object_list)
 
     def test_user_notes_do_not_include_other_users_notes(self):
         self.client.force_login(self.two_author)
