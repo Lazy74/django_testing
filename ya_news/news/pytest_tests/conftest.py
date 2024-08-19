@@ -79,14 +79,10 @@ def news_list():
 @pytest.fixture
 def comments_list(author, news):
     now = datetime.now()
-    comments = []
     for index in range(2):
-        sleep(0.1)
         comment = Comment.objects.create(
             news=news,
             author=author,
             text=f'Коментарий {index}',
-            created=now + timedelta(minutes=index)
         )
-        comments.append(comment)
-    return comments
+        comment.created = now - timedelta(days=index)
