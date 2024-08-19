@@ -8,6 +8,8 @@ from news.forms import BAD_WORDS, WARNING
 from news.models import Comment
 from news.pytest_tests.conftest import COMMENT_TEXTS, FORM_DATA
 
+pytestmark = pytest.mark.django_db
+
 
 @pytest.mark.parametrize(
     'user',
@@ -15,7 +17,6 @@ from news.pytest_tests.conftest import COMMENT_TEXTS, FORM_DATA
         pytest.lazy_fixture('client'),
     )
 )
-@pytest.mark.django_db
 def test_anonymous_user_cant_create_comment(
     user,
     news,
@@ -30,7 +31,6 @@ def test_anonymous_user_cant_create_comment(
         pytest.lazy_fixture('author_client'),
     )
 )
-@pytest.mark.django_db
 def test_auth_user_can_create_comment(
     user_auth,
     news,
