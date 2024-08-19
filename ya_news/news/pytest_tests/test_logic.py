@@ -1,4 +1,5 @@
 from http import HTTPStatus
+from random import choice
 
 import pytest
 from django.urls import reverse
@@ -33,15 +34,15 @@ def test_auth_user_can_create_comment(
 def test_user_cant_use_bad_words(author_client, news):
     response = author_client.post(
         reverse('news:detail', args=(news.pk,)),
-        data={'text': BAD_WORDS[0]},
+        data={'text': choice(BAD_WORDS)},
     )
+    assert Comment.objects.count() == 0
     assertFormError(
         response,
         'form',
         'text',
         WARNING,
     )
-    assert Comment.objects.count() == 0
 
 
 @pytest.mark.parametrize(
