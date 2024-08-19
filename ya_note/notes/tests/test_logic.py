@@ -119,8 +119,12 @@ class TestEditDelete(TestCase):
         url = reverse('notes:edit', args=(self.note.slug,))
         response = self.user_client.post(url, data=self.form_data)
         self.assertEqual(response.status_code, HTTPStatus.NOT_FOUND)
-        self.note.refresh_from_db()
-        self.assertEqual(self.note.text, self.note.text)
+        note = Note.objects.get(pk=self.note.pk)
+        self.assertEqual(self.note.pk, note.pk)
+        self.assertEqual(self.note.title, note.title)
+        self.assertEqual(self.note.text, note.text)
+        self.assertEqual(self.note.author, note.author)
+        self.assertEqual(self.note.slug, note.slug)
 
     def test_guest_cant_delete_others_note(self):
         url = reverse('notes:delete', args=(self.note.slug,))
