@@ -6,6 +6,7 @@ from pytest_django.asserts import assertFormError
 
 from news.forms import BAD_WORDS, WARNING
 from news.models import Comment
+from news.pytest_tests.conftest import COMMENT_TEXTS, FORM_DATA
 
 
 @pytest.mark.parametrize(
@@ -18,9 +19,8 @@ from news.models import Comment
 def test_anonymous_user_cant_create_comment(
     user,
     news,
-    form_data,
 ):
-    user.post(reverse('news:detail', args=(news.pk,)), data=form_data)
+    user.post(reverse('news:detail', args=(news.pk,)), data=FORM_DATA)
     assert Comment.objects.count() == Comment.objects.count()
 
 
@@ -34,10 +34,9 @@ def test_anonymous_user_cant_create_comment(
 def test_auth_user_can_create_comment(
     user_auth,
     news,
-    form_data,
 ):
     buff_comment_count = Comment.objects.count()
-    user_auth.post(reverse('news:detail', args=(news.pk,)), data=form_data)
+    user_auth.post(reverse('news:detail', args=(news.pk,)), data=FORM_DATA)
     assert Comment.objects.count() == buff_comment_count + 1
 
 
@@ -88,13 +87,11 @@ def test_edit_comment(
     expected_text,
     expected_status,
     comment,
-    form_data,
-    comment_text,
 ):
     response = user.post(
         reverse('news:edit', args=(comment.pk,)),
-        data=form_data
+        data=FORM_DATA
     )
     assert response.status_code == expected_status
     edited_comment = Comment.objects.get()
-    assert edited_comment.text == comment_text[expected_text]
+    assert edited_comment.text == COMMENT_TEXTS[expected_text]

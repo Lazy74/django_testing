@@ -1,11 +1,17 @@
 from datetime import datetime, timedelta
-from time import sleep
 
 import pytest
 from django.test.client import Client
 from django.conf import settings
 
 from news.models import Comment, News
+
+COMMENT_TEXTS = (
+    'Текст',
+    'Еще текст',
+)
+
+FORM_DATA = {'text': COMMENT_TEXTS[1]}
 
 
 @pytest.fixture
@@ -41,25 +47,12 @@ def news():
 
 
 @pytest.fixture
-def comment_text():
-    return (
-        'Текст',
-        'Еще текст',
-    )
-
-
-@pytest.fixture
-def comment(author, news, comment_text):
+def comment(author, news):
     return Comment.objects.create(
         news=news,
         author=author,
-        text=comment_text[0],
+        text=COMMENT_TEXTS[0],
     )
-
-
-@pytest.fixture
-def form_data(comment_text):
-    return {'text': comment_text[1]}
 
 
 @pytest.fixture
