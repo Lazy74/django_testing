@@ -46,20 +46,21 @@ def test_user_cant_use_bad_words(author_client, news):
 
 
 @pytest.mark.parametrize(
-    'user, expected_count',
+    'user, delta_count',
     (
-        (pytest.lazy_fixture('author_client'), 0),
-        (pytest.lazy_fixture('admin_client'), 1),
+        (pytest.lazy_fixture('author_client'), 1),
+        (pytest.lazy_fixture('admin_client'), 0),
     )
 )
 def test_can_delete_comment(
     user,
-    expected_count,
+    delta_count,
     comment,
 ):
+    start_comments_count = Comment.objects.count()
     user.post(reverse('news:delete', args=(comment.pk,)))
-    comments_count = Comment.objects.count()
-    assert comments_count == expected_count
+    end_comments_count = Comment.objects.count()
+    assert start_comments_count == end_comments_count + delta_count
 
 
 @pytest.mark.parametrize(
