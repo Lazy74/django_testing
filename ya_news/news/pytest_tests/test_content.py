@@ -2,6 +2,8 @@ import pytest
 from django.urls import reverse
 from django.conf import settings
 
+from news.forms import CommentForm
+
 URL = reverse('news:home')
 pytestmark = pytest.mark.django_db
 
@@ -43,3 +45,5 @@ def test_form_is_shown_to_correct_user(
 ):
     response = user.get(reverse('news:detail', args=(news.pk,)))
     assert ('form' in response.context) == access_form
+    if access_form:
+        assert isinstance(response.context['form'], CommentForm)
