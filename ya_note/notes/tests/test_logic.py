@@ -104,6 +104,9 @@ class TestEditDelete(TestCase):
         self.assertRedirects(response, reverse('notes:success'))
         self.note.refresh_from_db()
         self.assertEqual(self.note.text, self.form_data['text'])
+        self.assertEqual(self.note.author, self.author)
+        self.assertEqual(self.note.title, self.form_data['title'])
+        self.assertEqual(self.note.slug, self.form_data['slug'])
 
     def test_author_can_delete_note(self):
         start_count = Note.objects.count()
