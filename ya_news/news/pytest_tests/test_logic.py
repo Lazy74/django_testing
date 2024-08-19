@@ -11,17 +11,11 @@ from news.pytest_tests.conftest import COMMENT_TEXTS, FORM_DATA
 pytestmark = pytest.mark.django_db
 
 
-@pytest.mark.parametrize(
-    'user',
-    (
-        pytest.lazy_fixture('client'),
-    )
-)
 def test_anonymous_user_cant_create_comment(
-    user,
+    client,
     news,
 ):
-    user.post(reverse('news:detail', args=(news.pk,)), data=FORM_DATA)
+    client.post(reverse('news:detail', args=(news.pk,)), data=FORM_DATA)
     assert Comment.objects.count() == Comment.objects.count()
 
 
