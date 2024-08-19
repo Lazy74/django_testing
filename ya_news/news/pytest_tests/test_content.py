@@ -7,6 +7,7 @@ from news.forms import CommentForm
 URL = reverse('news:home')
 pytestmark = pytest.mark.django_db
 
+
 @pytest.mark.usefixtures('news_list')
 def test_news_count(client):
     response = client.get(URL)
