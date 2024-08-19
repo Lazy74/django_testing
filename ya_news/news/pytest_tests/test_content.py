@@ -3,9 +3,8 @@ from django.urls import reverse
 from django.conf import settings
 
 URL = reverse('news:home')
+pytestmark = pytest.mark.django_db
 
-
-@pytest.mark.django_db
 @pytest.mark.usefixtures('news_list')
 def test_news_count(client):
     response = client.get(URL)
@@ -15,7 +14,6 @@ def test_news_count(client):
     )
 
 
-@pytest.mark.django_db
 @pytest.mark.usefixtures('news_list')
 def test_news_order(client):
     response = client.get(URL)
@@ -38,7 +36,6 @@ def test_comments_order(client, news):
         (pytest.lazy_fixture('client'), False),
     )
 )
-@pytest.mark.django_db
 def test_form_is_shown_to_correct_user(
     user,
     access_form,
