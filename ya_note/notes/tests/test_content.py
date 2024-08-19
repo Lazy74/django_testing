@@ -45,12 +45,11 @@ class TestHomePage(TestCase):
         self.assertIn(member=self.two_note, container=object_list)
 
     def test_user_notes_do_not_include_other_users_notes(self):
-        self.client.force_login(self.two_author)
         url = reverse('notes:list')
-        response = self.client.get(url)
+        response = self.two_author_client.get(url)
         object_list = response.context['object_list']
-        for note in object_list:
-            self.assertEqual(note.author, self.two_author)
+        self.assertIn(member=self.two_note, container=object_list)
+        self.assertNotIn(member=self.one_note, container=object_list)
 
     def test_authorized_client_has_form(self):
         self.client.force_login(self.one_author)
