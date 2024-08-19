@@ -60,6 +60,8 @@ class TestNoteCreation(TestCase):
         self.assertEqual(initialQuantity, finalQuantity)
 
     def test_note_slug_is_generated_automatically_if_not_provided(self):
+        notes = Note.objects.all()
+        notes.delete()
         data = {
             'title': 'Новая заметка',
             'text': 'Текст заметки',
