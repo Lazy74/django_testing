@@ -64,16 +64,16 @@ def form_data(comment_text):
 
 @pytest.fixture
 def news_list():
-    news = []
     today = datetime.today()
-    for index in range(settings.NEWS_COUNT_ON_HOME_PAGE + 1):
-        news_piece = News.objects.create(
+    all_news = [
+        News(
             title=f'Заголовок новости {index}',
             text=f'Текст {index}',
             date=today - timedelta(days=index),
         )
-        news.append(news_piece)
-    return news
+        for index in range(settings.NEWS_COUNT_ON_HOME_PAGE + 1)
+    ]
+    News.objects.bulk_create(all_news)
 
 
 @pytest.fixture
