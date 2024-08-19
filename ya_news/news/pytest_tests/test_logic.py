@@ -7,7 +7,7 @@ from pytest_django.asserts import assertFormError
 
 from news.forms import BAD_WORDS, WARNING
 from news.models import Comment
-from news.pytest_tests.conftest import COMMENT_TEXTS, FORM_DATA
+from news.pytest_tests.conftest import FORM_DATA
 
 pytestmark = pytest.mark.django_db
 
@@ -64,26 +64,30 @@ def test_can_delete_comment(
 
 
 @pytest.mark.parametrize(
-    'user, expected_text, expected_status',
+    'user, can_edit_comment , expected_status',
     (
         (
-            pytest.lazy_fixture('admin_client'), 0, HTTPStatus.NOT_FOUND,
+            pytest.lazy_fixture('admin_client'), False, HTTPStatus.NOT_FOUND,
         ),
         (
-            pytest.lazy_fixture('author_client'), 1, HTTPStatus.FOUND,
+            pytest.lazy_fixture('author_client'), True, HTTPStatus.FOUND,
         ),
     )
 )
 def test_edit_comment(
     user,
-    expected_text,
+    can_edit_comment,
     expected_status,
     comment,
 ):
+    originalValue = Comment.objects.get(pk=comment.pk)
     response = user.post(
         reverse('news:edit', args=(comment.pk,)),
         data=FORM_DATA
     )
+    targetValue = Comment.objects.get(pk=comment.pk)
     assert response.status_code == expected_status
-    edited_comment = Comment.objects.get()
-    assert edited_comment.text == COMMENT_TEXTS[expected_text]
+    if can_edit_comment:
+        assert targetValue.text == FORM_DATA['text']
+    else:
+        assert targetValue.text == originalValue.text
