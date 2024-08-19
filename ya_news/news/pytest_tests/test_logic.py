@@ -65,9 +65,9 @@ def test_user_cant_use_bad_words(author_client, news):
 def test_can_delete_comment(
     user,
     expected_count,
-    comment_pk,
+    comment,
 ):
-    user.post(reverse('news:delete', args=comment_pk))
+    user.post(reverse('news:delete', args=(comment.pk,)))
     comments_count = Comment.objects.count()
     assert comments_count == expected_count
 
@@ -87,12 +87,12 @@ def test_edit_comment(
     user,
     expected_text,
     expected_status,
-    comment_pk,
+    comment,
     form_data,
     comment_text,
 ):
     response = user.post(
-        reverse('news:edit', args=comment_pk),
+        reverse('news:edit', args=(comment.pk,)),
         data=form_data
     )
     assert response.status_code == expected_status

@@ -33,8 +33,8 @@ def test_pages_availability_for_anonymous_user(client, name, news_object):
 @pytest.mark.parametrize(
     'name, news_object',
     (
-        ('news:edit', pytest.lazy_fixture('comment_pk')),
-        ('news:delete', pytest.lazy_fixture('comment_pk')),
+        ('news:edit', pytest.lazy_fixture('comment')),
+        ('news:delete', pytest.lazy_fixture('comment')),
     )
 )
 def test_pages_availability_to_edit_delete_comment_auth_user(
@@ -43,7 +43,7 @@ def test_pages_availability_to_edit_delete_comment_auth_user(
     name,
     news_object,
 ):
-    name = reverse(name, args=news_object)
+    name = reverse(name, args=(news_object.pk,))
     response = client.get(name)
     assert response.status_code == status
 
@@ -51,8 +51,8 @@ def test_pages_availability_to_edit_delete_comment_auth_user(
 @pytest.mark.parametrize(
     'name, comment_obj',
     (
-        ('news:edit', pytest.lazy_fixture('comment_pk')),
-        ('news:delete', pytest.lazy_fixture('comment_pk')),
+        ('news:edit', pytest.lazy_fixture('comment')),
+        ('news:delete', pytest.lazy_fixture('comment')),
     )
 )
 def test_access_to_edit_delete_comment_by_anon(
@@ -60,7 +60,7 @@ def test_access_to_edit_delete_comment_by_anon(
     name,
     comment_obj,
 ):
-    name = reverse(name, args=comment_obj)
+    name = reverse(name, args=(comment_obj.pk,))
     login_url = reverse('users:login')
     response = client.get(name)
     expected_url = f'{login_url}?next={name}'

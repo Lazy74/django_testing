@@ -58,11 +58,6 @@ def comment(author, news, comment_text):
 
 
 @pytest.fixture
-def comment_pk(comment):
-    return comment.pk,
-
-
-@pytest.fixture
 def form_data(comment_text):
     return {'text': comment_text[1]}
 
