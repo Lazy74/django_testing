@@ -49,11 +49,6 @@ def comment_text():
 
 
 @pytest.fixture
-def news_pk(news):
-    return news.pk,
-
-
-@pytest.fixture
 def comment(author, news, comment_text):
     return Comment.objects.create(
         news=news,

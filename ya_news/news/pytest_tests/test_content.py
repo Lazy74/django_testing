@@ -26,8 +26,8 @@ def test_news_order(client):
 
 
 @pytest.mark.usefixtures('comments_list')
-def test_comments_order(client, news_pk):
-    response = client.get(reverse('news:detail', args=news_pk))
+def test_comments_order(client, news):
+    response = client.get(reverse('news:detail', args=(news.pk,)))
     all_comments = response.context['news'].comment_set.all()
     assert list(all_comments) == list(all_comments.order_by('created'))
 
@@ -43,7 +43,7 @@ def test_comments_order(client, news_pk):
 def test_form_is_shown_to_correct_user(
     user,
     access_form,
-    news_pk,
+    news,
 ):
-    response = user.get(reverse('news:detail', args=news_pk))
+    response = user.get(reverse('news:detail', args=(news.pk,)))
     assert ('form' in response.context) == access_form

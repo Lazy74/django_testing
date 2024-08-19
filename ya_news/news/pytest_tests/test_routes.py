@@ -12,11 +12,13 @@ from pytest_django.asserts import assertRedirects
         ('users:signup', None),
         ('users:login', None),
         ('users:logout', None),
-        ('news:detail', pytest.lazy_fixture('news_pk')),
+        ('news:detail', pytest.lazy_fixture('news')),
     )
 )
 @pytest.mark.django_db
 def test_pages_availability_for_anonymous_user(client, name, news_object):
+    if news_object is not None:
+        news_object = news_object.pk,
     response = client.get(reverse(name, args=news_object))
     assert response.status_code == HTTPStatus.OK
 

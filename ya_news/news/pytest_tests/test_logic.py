@@ -17,10 +17,10 @@ from news.models import Comment
 @pytest.mark.django_db
 def test_anonymous_user_cant_create_comment(
     user,
-    news_pk,
+    news,
     form_data,
 ):
-    user.post(reverse('news:detail', args=news_pk), data=form_data)
+    user.post(reverse('news:detail', args=(news.pk,)), data=form_data)
     assert Comment.objects.count() == Comment.objects.count()
 
 
@@ -33,17 +33,17 @@ def test_anonymous_user_cant_create_comment(
 @pytest.mark.django_db
 def test_auth_user_can_create_comment(
     user_auth,
-    news_pk,
+    news,
     form_data,
 ):
     buff_comment_count = Comment.objects.count()
-    user_auth.post(reverse('news:detail', args=news_pk), data=form_data)
+    user_auth.post(reverse('news:detail', args=(news.pk,)), data=form_data)
     assert Comment.objects.count() == buff_comment_count + 1
 
 
-def test_user_cant_use_bad_words(author_client, news_pk):
+def test_user_cant_use_bad_words(author_client, news):
     response = author_client.post(
-        reverse('news:detail', args=news_pk),
+        reverse('news:detail', args=(news.pk,)),
         data={'text': BAD_WORDS[0]},
     )
     assertFormError(
