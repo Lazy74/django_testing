@@ -37,11 +37,14 @@ class TestNoteCreation(TestCase):
         self.assertEqual(initialQuantity, finalQuantity)
 
     def test_user_can_create_note(self):
+        notes = Note.objects.all()
+        notes.delete()
+        initialQuantity = Note.objects.count()
         url = reverse("notes:add", args=None)
         response = self.auth_client.post(url, data=self.form_data)
         self.assertRedirects(response, reverse('notes:success'))
-        note_count = Note.objects.count()
-        self.assertEqual(note_count, 1)
+        finalQuantity = Note.objects.count()
+        self.assertEqual(initialQuantity, finalQuantity)
         note = Note.objects.get()
         self.assertEqual(note.title, self.form_data['title'])
         self.assertEqual(note.text, self.form_data['text'])
