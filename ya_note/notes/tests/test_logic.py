@@ -1,9 +1,9 @@
 from http import HTTPStatus
-from pytils.translit import slugify
-
 from django.contrib.auth import get_user_model
 from django.test import Client, TestCase
 from django.urls import reverse
+
+from pytils.translit import slugify
 
 from notes.models import Note
 
@@ -30,10 +30,11 @@ class TestNoteCreation(TestCase):
         }
 
     def test_anonymous_user_cant_create_note(self):
+        initialQuantity = Note.objects.count()
         url = reverse("notes:add", args=None)
         self.client.post(url, data=self.form_data)
-        note_count = Note.objects.count()
-        self.assertEqual(note_count, 0)
+        finalQuantity = Note.objects.count()
+        self.assertEqual(initialQuantity, finalQuantity)
 
     def test_user_can_create_note(self):
         url = reverse("notes:add", args=None)
