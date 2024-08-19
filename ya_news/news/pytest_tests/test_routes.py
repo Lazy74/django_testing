@@ -1,25 +1,22 @@
 from http import HTTPStatus
 
 import pytest
-from django.urls import reverse
 from pytest_django.asserts import assertRedirects
 
 
 @pytest.mark.parametrize(
-    'name, news_object',
+    'variable_url',
     (
-        ('news:home', None),
-        ('users:signup', None),
-        ('users:login', None),
-        ('users:logout', None),
-        ('news:detail', pytest.lazy_fixture('news')),
+        pytest.lazy_fixture('url_home'),
+        pytest.lazy_fixture('url_signup'),
+        pytest.lazy_fixture('url_login'),
+        pytest.lazy_fixture('url_logout'),
+        pytest.lazy_fixture('url_detail'),
     )
 )
 @pytest.mark.django_db
-def test_pages_availability_for_anonymous_user(client, name, news_object):
-    if news_object is not None:
-        news_object = news_object.pk,
-    response = client.get(reverse(name, args=news_object))
+def test_pages_availability_for_anonymous_user(client, variable_url):
+    response = client.get(variable_url)
     assert response.status_code == HTTPStatus.OK
 
 
@@ -31,37 +28,33 @@ def test_pages_availability_for_anonymous_user(client, name, news_object):
     )
 )
 @pytest.mark.parametrize(
-    'name, news_object',
+    'variable_url',
     (
-        ('news:edit', pytest.lazy_fixture('comment')),
-        ('news:delete', pytest.lazy_fixture('comment')),
+        (pytest.lazy_fixture('url_edit')),
+        (pytest.lazy_fixture('url_delete')),
     )
 )
 def test_pages_availability_to_edit_delete_comment_auth_user(
     client,
     status,
-    name,
-    news_object,
+    variable_url,
 ):
-    name = reverse(name, args=(news_object.pk,))
-    response = client.get(name)
+    response = client.get(variable_url)
     assert response.status_code == status
 
 
 @pytest.mark.parametrize(
-    'name, comment_obj',
+    'variable_url',
     (
-        ('news:edit', pytest.lazy_fixture('comment')),
-        ('news:delete', pytest.lazy_fixture('comment')),
+        (pytest.lazy_fixture('url_edit')),
+        (pytest.lazy_fixture('url_delete')),
     )
 )
 def test_access_to_edit_delete_comment_by_anon(
     client,
-    name,
-    comment_obj,
+    variable_url,
+    url_login,
 ):
-    name = reverse(name, args=(comment_obj.pk,))
-    login_url = reverse('users:login')
-    response = client.get(name)
-    expected_url = f'{login_url}?next={name}'
+    response = client.get(variable_url)
+    expected_url = f'{url_login}?next={variable_url}'
     assertRedirects(response, expected_url)
