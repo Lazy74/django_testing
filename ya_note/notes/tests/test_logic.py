@@ -43,7 +43,7 @@ class TestNoteCreation(TestCase):
         url = reverse("notes:add", args=None)
         response = self.auth_client.post(url, data=self.form_data)
         self.assertRedirects(response, reverse('notes:success'))
-        finalQuantity = Note.objects.count()
+        finalQuantity = Note.objects.count() - 1
         self.assertEqual(initialQuantity, finalQuantity)
         note = Note.objects.get()
         self.assertEqual(note.title, self.form_data['title'])
@@ -52,11 +52,12 @@ class TestNoteCreation(TestCase):
         self.assertEqual(note.slug, self.form_data['slug'])
 
     def test_user_cant_create_note_same_slug(self):
+        initialQuantity = Note.objects.count()
         url = reverse("notes:add", args=None)
         self.auth_client.post(url, data=self.form_data)
         self.auth_client.post(url, data=self.form_data_slug)
-        note_count = Note.objects.count()
-        self.assertEqual(note_count, 1)
+        finalQuantity = Note.objects.count() - 1
+        self.assertEqual(initialQuantity, finalQuantity)
 
     def test_note_slug_is_generated_automatically_if_not_provided(self):
         data = {
