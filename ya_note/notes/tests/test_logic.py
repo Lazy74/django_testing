@@ -1,5 +1,4 @@
 from http import HTTPStatus
-from django.urls import reverse
 
 from pytils.translit import slugify
 
@@ -11,8 +10,7 @@ class TestNoteCreation(BaseTestCase):
 
     def test_anonymous_user_cant_create_note(self):
         initialQuantity = Note.objects.count()
-        url = reverse("notes:add", args=None)
-        self.client.post(url, data=self.form_data)
+        self.client.post(self.url_add, data=self.form_data)
         finalQuantity = Note.objects.count()
         self.assertEqual(initialQuantity, finalQuantity)
 
@@ -20,9 +18,10 @@ class TestNoteCreation(BaseTestCase):
         notes = Note.objects.all()
         notes.delete()
         initialQuantity = Note.objects.count()
-        url = reverse("notes:add", args=None)
-        response = self.one_author_client.post(url, data=self.form_data)
-        self.assertRedirects(response, reverse('notes:success'))
+        response = self.one_author_client.post(
+            self.url_add, data=self.form_data
+        )
+        self.assertRedirects(response, self.url_success)
         finalQuantity = Note.objects.count() - 1
         self.assertEqual(initialQuantity, finalQuantity)
         note = Note.objects.get()
@@ -33,9 +32,8 @@ class TestNoteCreation(BaseTestCase):
 
     def test_user_cant_create_note_same_slug(self):
         initialQuantity = Note.objects.count()
-        url = reverse("notes:add", args=None)
-        self.one_author_client.post(url, data=self.form_data)
-        self.one_author_client.post(url, data=self.form_data_slug)
+        self.one_author_client.post(self.url_add, data=self.form_data)
+        self.one_author_client.post(self.url_add, data=self.form_data_slug)
         finalQuantity = Note.objects.count() - 1
         self.assertEqual(initialQuantity, finalQuantity)
 
@@ -47,9 +45,8 @@ class TestNoteCreation(BaseTestCase):
             'text': 'Текст заметки',
         }
         slug = slugify(data['title'])
-        url = reverse("notes:add", args=None)
-        response = self.one_author_client.post(url, data=data)
-        self.assertRedirects(response, reverse('notes:success'))
+        response = self.one_author_client.post(self.url_add, data=data)
+        self.assertRedirects(response, self.url_success)
         note = Note.objects.get()
         self.assertEqual(note.slug, slug)
 
@@ -57,9 +54,10 @@ class TestNoteCreation(BaseTestCase):
 class TestEditDelete(BaseTestCase):
 
     def test_author_can_edit_note(self):
-        url = reverse('notes:edit', args=(self.one_note.slug,))
-        response = self.one_author_client.post(url, data=self.form_data)
-        self.assertRedirects(response, reverse('notes:success'))
+        response = self.one_author_client.post(
+            self.url_edit, data=self.form_data
+        )
+        self.assertRedirects(response, self.url_success)
         self.one_note.refresh_from_db()
         self.assertEqual(self.one_note.text, self.form_data['text'])
         self.assertEqual(self.one_note.author, self.one_author)
@@ -68,14 +66,14 @@ class TestEditDelete(BaseTestCase):
 
     def test_author_can_delete_note(self):
         start_count = Note.objects.count()
-        url = reverse('notes:delete', args=(self.one_note.slug,))
-        response = self.one_author_client.delete(url)
-        self.assertRedirects(response, reverse('notes:success'))
+        response = self.one_author_client.delete(self.url_delete)
+        self.assertRedirects(response, self.url_success)
         self.assertEqual(Note.objects.count(), start_count - 1)
 
     def test_guest_cant_edit_others_note(self):
-        url = reverse('notes:edit', args=(self.one_note.slug,))
-        response = self.two_author_client.post(url, data=self.form_data)
+        response = self.two_author_client.post(
+            self.url_edit, data=self.form_data
+        )
         self.assertEqual(response.status_code, HTTPStatus.NOT_FOUND)
         note = Note.objects.get(pk=self.one_note.pk)
         self.assertEqual(self.one_note.pk, note.pk)
@@ -86,8 +84,7 @@ class TestEditDelete(BaseTestCase):
 
     def test_guest_cant_delete_others_note(self):
         start_count = Note.objects.count()
-        url = reverse('notes:delete', args=(self.one_note.slug,))
-        response = self.two_author_client.delete(url)
+        response = self.two_author_client.delete(self.url_delete)
         self.assertEqual(response.status_code, HTTPStatus.NOT_FOUND)
         notes_count = Note.objects.count()
         self.assertEqual(notes_count, start_count)
