@@ -21,7 +21,7 @@ class TestRoutes(BaseTestCase):
             self.url_signup,
         )
         for url in urls:
-            with self.subTest(url=url):
+            with self.subTest(user=get_user(self.main_author_client)):
                 response = self.main_author_client.get(url)
                 self.assertEqual(response.status_code, HTTPStatus.OK)
 
