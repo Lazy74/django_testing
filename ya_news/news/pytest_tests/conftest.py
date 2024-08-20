@@ -80,6 +80,7 @@ def comments_list(author, news):
             text=f'Коментарий {index}',
         )
         comment.created = now - timedelta(days=index)
+        comment.save()
 
 
 # conftest.py
