@@ -98,4 +98,4 @@ def test_edit_comment(
         assert target_value.text == FORM_DATA['text']
     else:
         assert target_value.text == original_value.text
-        assert target_value.author == original_value.author
+    assert target_value.author == original_value.author
