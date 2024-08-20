@@ -1,6 +1,7 @@
 import pytest
 from django.conf import settings
 from pytest_lazyfixture import lazy_fixture as lf
+
 from news.forms import CommentForm
 
 pytestmark = pytest.mark.django_db

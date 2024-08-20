@@ -1,6 +1,7 @@
 from http import HTTPStatus
 
 from django.contrib.auth import get_user
+
 from notes.tests.base_test_case import BaseTestCase
 
 

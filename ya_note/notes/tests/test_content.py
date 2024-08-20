@@ -5,7 +5,6 @@ from notes.tests.base_test_case import BaseTestCase
 
 
 class TestHomePage(BaseTestCase):
-
     def test_news_count(self):
         response = self.other_author_client.get(self.url_list)
         object_list = response.context['object_list']

@@ -1,8 +1,9 @@
-import pytest
-from pytest_django.asserts import assertFormError
-from pytest_lazyfixture import lazy_fixture as lf
 from http import HTTPStatus
 from random import choice
+
+import pytest
+from pytest_lazyfixture import lazy_fixture as lf
+from pytest_django.asserts import assertFormError
 
 from news.forms import BAD_WORDS, WARNING
 from news.models import Comment
