@@ -16,13 +16,12 @@ class TestHomePage(BaseTestCase):
         self.assertNotIn(member=self.one_note, container=object_list)
 
     def test_authorized_client_has_form(self):
-        self.client.force_login(self.one_author)
         urls = (
             self.url_add,
             self.url_edit,
         )
         for url in urls:
-            with self.subTest():
-                response = self.client.get(url)
+            with self.subTest(url=url):
+                response = self.one_author_client.get(url)
                 self.assertIn('form', response.context)
                 self.assertIsInstance(response.context['form'], NoteForm)
