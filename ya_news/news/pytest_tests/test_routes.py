@@ -1,53 +1,37 @@
 from http import HTTPStatus
 
 import pytest
+from pytest import lazy_fixture as lf
 from pytest_django.asserts import assertRedirects
 
 
 @pytest.mark.parametrize(
-    'variable_url',
+    'reverse_url, parametrized_client, status',
     (
-        pytest.lazy_fixture('url_home'),
-        pytest.lazy_fixture('url_signup'),
-        pytest.lazy_fixture('url_login'),
-        pytest.lazy_fixture('url_logout'),
-        pytest.lazy_fixture('url_detail'),
+        (lf('url_home'), lf('client'), HTTPStatus.OK),
+        (lf('url_signup'), lf('client'), HTTPStatus.OK),
+        (lf('url_login'), lf('client'), HTTPStatus.OK),
+        (lf('url_logout'), lf('client'), HTTPStatus.OK),
+        (lf('url_detail'), lf('client'), HTTPStatus.OK),
+        (lf('url_edit'), lf('author_client'), HTTPStatus.OK),
+        (lf('url_delete'), lf('author_client'), HTTPStatus.OK),
+        (lf('url_edit'), lf('admin_client'), HTTPStatus.NOT_FOUND),
+        (lf('url_delete'), lf('admin_client'), HTTPStatus.NOT_FOUND),
     )
 )
 @pytest.mark.django_db
-def test_pages_availability_for_anonymous_user(client, variable_url):
-    response = client.get(variable_url)
-    assert response.status_code == HTTPStatus.OK
-
-
-@pytest.mark.parametrize(
-    'client, status',
-    (
-        (pytest.lazy_fixture('author_client'), HTTPStatus.OK),
-        (pytest.lazy_fixture('admin_client'), HTTPStatus.NOT_FOUND),
-    )
-)
-@pytest.mark.parametrize(
-    'variable_url',
-    (
-        (pytest.lazy_fixture('url_edit')),
-        (pytest.lazy_fixture('url_delete')),
-    )
-)
-def test_pages_availability_to_edit_delete_comment_auth_user(
-    client,
-    status,
-    variable_url,
+def test_page_accessibility_for_anonymous_and_auth_users(
+    reverse_url, parametrized_client, status
 ):
-    response = client.get(variable_url)
+    response = parametrized_client.get(reverse_url)
     assert response.status_code == status
 
 
 @pytest.mark.parametrize(
     'variable_url',
     (
-        (pytest.lazy_fixture('url_edit')),
-        (pytest.lazy_fixture('url_delete')),
+        (lf('url_edit')),
+        (lf('url_delete')),
     )
 )
 def test_access_to_edit_delete_comment_by_anon(
