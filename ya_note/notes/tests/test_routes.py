@@ -1,5 +1,6 @@
 from http import HTTPStatus
 
+from django.contrib.auth import get_user
 from notes.tests.base_test_case import BaseTestCase
 
 
@@ -32,7 +33,7 @@ class TestRoutes(BaseTestCase):
             for url in (
                 self.url_edit, self.url_detail, self.url_delete,
             ):
-                with self.subTest(status=status, url=url):
+                with self.subTest(status=status, user=get_user(client)):
                     response = client.get(url)
                     self.assertEqual(response.status_code, status)
 
