@@ -9,21 +9,21 @@ from notes.tests.base_test_case import BaseTestCase
 class TestNoteCreation(BaseTestCase):
 
     def test_anonymous_user_cant_create_note(self):
-        initialQuantity = Note.objects.count()
+        initial_quantity = Note.objects.count()
         self.client.post(self.url_add, data=self.form_data)
-        finalQuantity = Note.objects.count()
-        self.assertEqual(initialQuantity, finalQuantity)
+        final_quantity = Note.objects.count()
+        self.assertEqual(initial_quantity, final_quantity)
 
     def test_user_can_create_note(self):
         notes = Note.objects.all()
         notes.delete()
-        initialQuantity = Note.objects.count()
+        initial_quantity = Note.objects.count()
         response = self.one_author_client.post(
             self.url_add, data=self.form_data
         )
         self.assertRedirects(response, self.url_success)
-        finalQuantity = Note.objects.count() - 1
-        self.assertEqual(initialQuantity, finalQuantity)
+        final_quantity = Note.objects.count() - 1
+        self.assertEqual(initial_quantity, final_quantity)
         note = Note.objects.get()
         self.assertEqual(note.title, self.form_data['title'])
         self.assertEqual(note.text, self.form_data['text'])
@@ -31,11 +31,11 @@ class TestNoteCreation(BaseTestCase):
         self.assertEqual(note.slug, self.form_data['slug'])
 
     def test_user_cant_create_note_same_slug(self):
-        initialQuantity = Note.objects.count()
+        initial_quantity = Note.objects.count()
         self.one_author_client.post(self.url_add, data=self.form_data)
         self.one_author_client.post(self.url_add, data=self.form_data_slug)
-        finalQuantity = Note.objects.count() - 1
-        self.assertEqual(initialQuantity, finalQuantity)
+        final_quantity = Note.objects.count() - 1
+        self.assertEqual(initial_quantity, final_quantity)
 
     def test_note_slug_is_generated_automatically_if_not_provided(self):
         notes = Note.objects.all()
