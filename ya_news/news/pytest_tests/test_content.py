@@ -1,6 +1,6 @@
 import pytest
 from django.conf import settings
-
+from pytest_lazyfixture import lazy_fixture as lf
 from news.forms import CommentForm
 
 pytestmark = pytest.mark.django_db
@@ -31,18 +31,18 @@ def test_comments_order(client, url_detail):
 
 
 @pytest.mark.parametrize(
-    'user, access_form',
+    'test_client_instance, access_form',
     (
-        (pytest.lazy_fixture('author_client'), True),
-        (pytest.lazy_fixture('client'), False),
+        (lf('author_client'), True),
+        (lf('client'), False),
     )
 )
 def test_form_is_shown_to_correct_user(
-    user,
+    test_client_instance,
     access_form,
     url_detail,
 ):
-    response = user.get(url_detail)
+    response = test_client_instance.get(url_detail)
     assert ('form' in response.context) == access_form
     if access_form:
         assert isinstance(response.context['form'], CommentForm)

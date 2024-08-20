@@ -1,8 +1,7 @@
-from http import HTTPStatus
-
 import pytest
 from pytest import lazy_fixture as lf
 from pytest_django.asserts import assertRedirects
+from http import HTTPStatus
 
 
 @pytest.mark.parametrize(
