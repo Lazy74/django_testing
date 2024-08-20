@@ -11,7 +11,7 @@ def test_news_count(client, url_home):
     response = client.get(url_home)
     assert (
         response.context['object_list'].count()
-        <= settings.NEWS_COUNT_ON_HOME_PAGE
+        == settings.NEWS_COUNT_ON_HOME_PAGE
     )
 
 
