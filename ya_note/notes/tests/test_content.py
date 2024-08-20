@@ -5,12 +5,12 @@ from notes.tests.base_test_case import BaseTestCase
 class TestHomePage(BaseTestCase):
 
     def test_news_count(self):
-        response = self.two_author_client.get(self.url_list)
+        response = self.other_author_client.get(self.url_list)
         object_list = response.context['object_list']
         self.assertIn(member=self.two_note, container=object_list)
 
     def test_user_notes_do_not_include_other_users_notes(self):
-        response = self.two_author_client.get(self.url_list)
+        response = self.other_author_client.get(self.url_list)
         object_list = response.context['object_list']
         self.assertIn(member=self.two_note, container=object_list)
         self.assertNotIn(member=self.one_note, container=object_list)
@@ -22,6 +22,6 @@ class TestHomePage(BaseTestCase):
         )
         for url in urls:
             with self.subTest(url=url):
-                response = self.one_author_client.get(url)
+                response = self.main_author_client.get(url)
                 self.assertIn('form', response.context)
                 self.assertIsInstance(response.context['form'], NoteForm)

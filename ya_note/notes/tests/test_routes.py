@@ -20,13 +20,13 @@ class TestRoutes(BaseTestCase):
         )
         for url in urls:
             with self.subTest(url=url):
-                response = self.one_author_client.get(url)
+                response = self.main_author_client.get(url)
                 self.assertEqual(response.status_code, HTTPStatus.OK)
 
     def test_availability_access_to_edit_and_delete_note(self):
         users_statuses = (
-            (self.one_author_client, HTTPStatus.OK),
-            (self.two_author_client, HTTPStatus.NOT_FOUND),
+            (self.main_author_client, HTTPStatus.OK),
+            (self.other_author_client, HTTPStatus.NOT_FOUND),
         )
         for client, status in users_statuses:
             for url in (
@@ -36,7 +36,7 @@ class TestRoutes(BaseTestCase):
                     response = client.get(url)
                     self.assertEqual(response.status_code, status)
 
-    def test_redirect_for_anonymous_client(self):
+    def test_redirect_for_anonymous_client(self, request):
         urls = (
             self.url_list,
             self.url_success,

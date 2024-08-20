@@ -11,27 +11,27 @@ class BaseTestCase(TestCase):
 
     @classmethod
     def setUpTestData(cls):
-        cls.one_author = User.objects.create(username='OneAuthor')
-        cls.one_author_client = Client()
-        cls.one_author_client.force_login(cls.one_author)
+        cls.main_author = User.objects.create(username='main_author')
+        cls.main_author_client = Client()
+        cls.main_author_client.force_login(cls.main_author)
         cls.one_note = Note.objects.create(
             title='Новая заметка',
-            author=cls.one_author,
+            author=cls.main_author,
             text='Текст заметки',
             slug='slugone',
         )
-        cls.two_author = User.objects.create(username='TwoAuthor')
-        cls.two_author_client = Client()
-        cls.two_author_client.force_login(cls.two_author)
+        cls.other_author = User.objects.create(username='other_author')
+        cls.other_author_client = Client()
+        cls.other_author_client.force_login(cls.other_author)
         cls.two_note = Note.objects.create(
             title='Новая заметка',
-            author=cls.two_author,
+            author=cls.other_author,
             text='Текст заметки',
             slug='slugtwo',
         )
         cls.three_note = Note.objects.create(
             title='Новая заметка',
-            author=cls.two_author,
+            author=cls.other_author,
             text='Текст заметки',
             slug='slugthree',
         )
