@@ -1,3 +1,5 @@
+from django.contrib.auth import get_user
+
 from notes.forms import NoteForm
 from notes.tests.base_test_case import BaseTestCase
 
@@ -21,7 +23,7 @@ class TestHomePage(BaseTestCase):
             self.url_edit,
         )
         for url in urls:
-            with self.subTest(url=url):
+            with self.subTest(user=get_user(self.main_author_client)):
                 response = self.main_author_client.get(url)
                 self.assertIn('form', response.context)
                 self.assertIsInstance(response.context['form'], NoteForm)
