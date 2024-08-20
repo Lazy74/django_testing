@@ -36,7 +36,7 @@ class TestRoutes(BaseTestCase):
                     response = client.get(url)
                     self.assertEqual(response.status_code, status)
 
-    def test_redirect_for_anonymous_client(self, request):
+    def test_redirect_for_anonymous_client(self):
         urls = (
             self.url_list,
             self.url_success,
